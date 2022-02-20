@@ -26,7 +26,7 @@ int main() {
 
   // freeing alocated memories
   // arrays
-  for (int i = 0; i < w; i++) {
+  for (int i = 0; i < h; i++) {
     free(graph_matrix[i]);
     graph_matrix[i] = NULL;
   }
