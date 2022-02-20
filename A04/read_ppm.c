@@ -9,34 +9,30 @@
 struct ppm_pixel** read_ppm(const char* filename, int* w, int* h) {
   
   FILE* infile = NULL;
-  unsigned char r, g, b;
-  //char filetype[10];
   char buffer[1024]; // allocate 1024 for potential use
+  unsigned char r, g, b;
   struct ppm_pixel** pixel = NULL;
 
   infile = fopen(filename, "r");
-  if (infile == NULL) { // error message if can't open file
-    printf("Cannot open file. Exiting.\n");
+  if (infile == NULL || !infile) { // error message if can't open file
+    printf("Fail to open file.\n");
     return NULL;
   }
 
-  // check whether it's ASCII
+  // ppm file type
   fgets(buffer, 1024, infile);
-  // if (strcmp(buffer, 'P3') != 0) {
-  //   printf("Incorrect file type. Need to be in ASCII");
-  //   return NULL;
-  // }
 
   // read in comment or skip any other kinds of blank lines
-  while (buffer[0] == '#' || buffer[0] == ' ' || 
+  if (buffer[0] == '#' || buffer[0] == ' ' || 
     buffer[0] == '\n' || buffer[0] == '\r') {
     fgets(buffer, 1024, infile);
   }
+  fgets(buffer, 1024, infile);
 
   // read in width and height
   fgets(buffer, 1024, infile);
   sscanf(buffer, "%d %d", w, h);
-  
+
   // assume the maximum color value will always be correct
   fgets(buffer, 1024, infile);
 
@@ -55,7 +51,7 @@ struct ppm_pixel** read_ppm(const char* filename, int* w, int* h) {
     }
   }
 
-  // fill the 2D array
+  // populating 2D array
   for (int i = 0; i < *h; i++) {
     for (int j = 0; j < *w; j++) {
       fscanf(infile, " %hhu %hhu %hhu", &r, &g, &b);
@@ -65,6 +61,7 @@ struct ppm_pixel** read_ppm(const char* filename, int* w, int* h) {
     }
   } 
 
+  // close file to restore memory
   fclose(infile);
   return pixel;
 }
