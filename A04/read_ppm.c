@@ -21,20 +21,19 @@ struct ppm_pixel** read_ppm(const char* filename, int* w, int* h) {
 
   // ppm file type
   fgets(buffer, 1024, infile);
-
+  fgets(buffer, 1024, infile);
   // read in comment or skip any other kinds of blank lines
-  if (buffer[0] == '#' || buffer[0] == ' ' || 
-    buffer[0] == '\n' || buffer[0] == '\r') {
+  while (buffer[0] == '#' || buffer[0] == ' ' || 
+    buffer[0] == '\n' || buffer[0] == '\r') { 
     fgets(buffer, 1024, infile);
   }
-  fgets(buffer, 1024, infile);
 
   // read in width and height
-  fgets(buffer, 1024, infile);
   sscanf(buffer, "%d %d", w, h);
 
   // assume the maximum color value will always be correct
   fgets(buffer, 1024, infile);
+
 
   // allocate memory for 2D array of arrays
   pixel = malloc(sizeof(struct ppm_pixel*) * *h);
