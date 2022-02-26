@@ -1,6 +1,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <time.h>
 #include "read_ppm.h"
 
 // TODO: Implement this function
@@ -62,20 +63,32 @@ struct ppm_pixel** read_ppm(const char* filename, int* w, int* h) {
   return pixel;
 }
 
-
-
-
-
 // TODO: Implement this function
 // Feel free to change the function signature if you prefer to implement an 
 // array of arrays
-extern void write_ppm(const char* filename, struct ppm_pixel* pxs, int w, int h) {
-  // FILE *infile;
-  // infile = fopen(filename, "wb");
-  // if (infile == NULL || !infile) { // error message if can't open file
-  //   printf("Fail to open file.\n");
-  //   return NULL;
-  // }
-  // char word[1024];
+extern void write_ppm(const char* filename, struct ppm_pixel** pxs, int w, int h) {
+  FILE *outfile;
+  outfile = fopen(filename, "wb");
+  if (outfile == NULL || !outfile) { // error message if can't open file
+    printf("Fail to open file.\n");
+    exit(1);
+  }
+  
+  srand(time(NULL));
+  
+  //print statement
+  fprintf(outfile, "P6\n Comments\n %d %d\n %d\n", w, h, 255);
+  struct ppm_pixel curr_pixel;
+  
+  for (int i = 0; i < h; i++) {
+    for (int j = 0; j < w; j++) {
+      curr_pixel = pxs[i][j];
+      curr_pixel.red = curr_pixel.red << (rand() % 5); 
+      curr_pixel.green = curr_pixel.green << (rand() % 3); 
+      curr_pixel.blue = curr_pixel.blue << (rand() % 7); 
+      fwrite(curr_pixel.colors, 3, 1, outfile);
+    }
+  }
 
+  fclose(outfile);
 }
