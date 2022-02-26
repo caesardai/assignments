@@ -41,6 +41,9 @@ int main(int argc, char** argv) {
   printf("Writing file %s\n", output_name);
 
   write_ppm(output_name, graph_matrix, w, h);
+  
+  free(output_name);
+  output_name = NULL;
 
   // free allocated memory
   for (int i = 0; i < h; i++) {
