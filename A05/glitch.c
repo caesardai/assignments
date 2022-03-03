@@ -12,7 +12,7 @@ int main(int argc, char** argv) {
   int w;
   int h;
   char* input_name = argv[1];
-  char* output_name = malloc(strlen(argv[1]) + 1);
+  char* output_name = malloc(strlen(argv[1]) + 8);
   int name_len = strlen(input_name) - 4;
 
   struct ppm_pixel** graph_matrix = NULL;
@@ -38,6 +38,7 @@ int main(int argc, char** argv) {
   strcat(output_name, "-glitch.ppm");
 
   printf("Reading %s with width %d and height %d\n", input_name, w, h);
+  output_name[name_len] = '\0';
   printf("Writing file %s\n", output_name);
 
   write_ppm(output_name, graph_matrix, w, h);
