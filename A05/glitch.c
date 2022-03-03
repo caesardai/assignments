@@ -35,10 +35,10 @@ int main(int argc, char** argv) {
   }
 
   strncpy(output_name, input_name, name_len);
+  output_name[name_len] = '\0';
   strcat(output_name, "-glitch.ppm");
 
   printf("Reading %s with width %d and height %d\n", input_name, w, h);
-  output_name[name_len] = '\0';
   printf("Writing file %s\n", output_name);
 
   write_ppm(output_name, graph_matrix, w, h);
