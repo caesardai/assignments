@@ -6,17 +6,15 @@
 int power(int base, int pwr);           
 
 int main(int argc, char** argv) {                                                
-  if (argc != 2) {                                                               
-    printf("Invalid runtime arguments");                                         
+  if (argc != 2 || argv[1] == NULL) {                                                               
+    printf("Invalid runtime arguments. Check number of inputs.");                                         
     exit(1);                                                                     
-  } 
-
-  if (argv[1] == NULL) {                                                         
-    printf("Need an input file!");                                               
-    exit(1);                                                                     
-  }                                                                              
+  }                                                                      
                                                                                  
-  int w, h, product, max_char;                                                                  
+  int w;
+  int h;
+  int product; 
+  int max_char;                                                                  
   const char* input_filename = argv[1];                                          
   struct ppm_pixel** graph_matrix = NULL;                                        
                                                                                                                       
@@ -27,20 +25,22 @@ int main(int argc, char** argv) {
   }                                                                              
                                                                                  
   max_char = (w * h * 3) / 8; // calculate max encoded character                 
-  printf("Reading %s with %d and height %d\n", input_filename, w, h);            
-  printf("Max number of characters in the image: %d\n", max_char);                                                                              
+  printf("Reading %s with %d and height %d\n", input_filename, w, h);                                                                                          
                                                                                  
   // extract message                                                             
   char* msg = malloc(max_char);                                                  
   if (msg == NULL) {                                                             
     printf("memory allocation failed. Exiting");                                 
     exit(1);                                                                     
-  }                                                                              
+  }    
+
+  printf("Max number of characters in the image: %d\n", max_char);                                         
                                                                                  
   unsigned int mask = 0x1; // 0b0000000000000001                                 
                                                                                  
   // take out the number while calculating for the sum                                                                                 
-  int pwr = 7, sum = 0, index = 0, counter = 0;  
+  int pwr = 7;
+  int sum = 0, index = 0, counter = 0;  
 
   for (int i = 0; i < h ; i++) {                                                 
     for ( int j = 0; j < w; j++) {                                               
@@ -50,7 +50,11 @@ int main(int argc, char** argv) {
         if (product == 1) {  
           // printf("1");                                                                                                                                             
           sum += power(2, pwr);                                              
-        }                                                                      
+        }                
+        else {
+          // printf("0");
+          sum += 0;
+        }                                            
         counter++;
         pwr--;                                                                 
 
@@ -64,7 +68,8 @@ int main(int argc, char** argv) {
       }                                                                          
     }                                                                                                                                                                                                            
   }                                                                                                                                                  
-  printf(" %s", msg);                                                             
+  printf("%s", msg);
+  printf("\n");                                                             
 
   // free allocated memory                                                       
   for (int o = 0; o < h; o++) {                                                  
