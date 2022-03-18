@@ -46,6 +46,15 @@ int main() { //int num_args, char* argv[]
         }
     }
 
+    // print matrix
+    for (int row = 0; row < nRow; row++) {
+        for (int col = 0; col < mCol; col++) {
+            printf(" %d", matrix[row][col]);
+        }
+        printf("\n");
+    }
+
+
     magic_constant = 0;                 // calculate magic constant for comparison
     for (int i = 0; i < nRow; i++) {
         magic_constant = magic_constant + matrix[i][0]; 
@@ -54,14 +63,21 @@ int main() { //int num_args, char* argv[]
     // check whether it's magic or not
     int result = checkMagic(nRow, mCol, matrix, magic_constant);
     if (result == 1) {
-        printf("M is a magic square (magic constant = %d)\n", magic_constant);
+        printf("M is a magic square (magic constant = %d)", magic_constant);
     }
     else if (result == 0) {
-        printf("M is NOT a magic square (magic constant = %d)\n", magic_constant);
+        printf("M is NOT a magic square (magic constant = %d)", magic_constant);
     }
     
     free(rowSum_arr);
     rowSum_arr = NULL;
+   
+    for (int i = 0; i < nRow; i++) {    
+        free(matrix[i]);
+        matrix[i] = NULL;
+
+    }
+    
     free(matrix);
     matrix = NULL;
 
@@ -112,4 +128,3 @@ int checkMagic(int numRow, int numCol, int** matrix, int magic_constant) {
 
     return 1; // true
 }
-
