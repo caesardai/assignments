@@ -1,123 +1,111 @@
 #include <stdio.h>
 #include <stdlib.h>
-#include <time.h>
 #include <string.h>
+#include <time.h>
 
-#define ROCK 1
-#define PAPER 2
-#define SCISSORS 3
+int compareMoves(int a_move, int p_move);
 
-int match(int *player_move_o, int *ai_move_o, int *player_score, int *ai_score)
-{
-    int player_move = *player_move_o;
-    int ai_move = *ai_move_o;
-    int player_score_l = *player_score;
-    int ai_score_l = *ai_score;
+int main() {
+    int p_score = 0;
+    int a_score = 0;
+    int rounds, aMove, result;
+    char pMove[64];
 
-    if (player_move != 1 && player_move != 2 && player_move != 3)
-    {
-        printf("You entered an invalid choice, please try again.\n");
-        printf("AI score: %d, player score: %d\n", ai_score_l, player_score_l);
-            *player_score = player_score_l;
-            *ai_score = ai_score_l;
+    printf("Welcome to Rock, Paper, Scissors!\n");
+    printf("How many rounds do you want to play?\n");
+    scanf(" %d", &rounds);
+
+    for (int i = 0; i < rounds; i++) {
+        srand(time(0));
+        printf("Which do you choose? rock, paper, or scissors? ");
+        scanf("%s", pMove);
+        if ((strcmp(pMove, "rock") != 0) && (strcmp(pMove, "paper") != 0) && (strcmp(pMove, "scissors") != 0)) {
+            printf("You entered an invalid choice: %s\n", pMove);
+            printf("AI score: %d Player score: %d\n", a_score, p_score);
+        }
+        int pRock = strcmp(pMove, "rock");
+        int pPaper  = strcmp(pMove, "paper");
+        int pScissors = strcmp(pMove, "scissors");
+
+        // AI move
+        aMove = rand() % 3; 
+        if (aMove == 0) {
+            printf("AI chose rock\n");
+        }
+        else if (aMove == 1) {
+            printf("AI chose paper\n");
+        }
+        else {
+            printf("AI chose scissors\n");
+        }
+
+        // result print statement
+        if ((pRock == 0 && aMove == 1) || (pPaper == 0 && aMove == 0)) {
+            printf("Paper covers rock\n");
+        }
+        else if ((pPaper == 0 && aMove == 2) || (pScissors == 0 && aMove == 1)) {
+            printf("Scissors cut paper\n");
+        }
+        else if ((pScissors == 0 && aMove == 0) || (pPaper == 0 && aMove == 2)) {
+            printf("Rock bashes scissors\n");
+        }
+
+        // compare moves
+        if (pRock == 0) {
+            result = compareMoves(aMove, 0);
+        } else if (pPaper == 0) {
+            result = compareMoves(aMove, 1);
+        } else {
+            result = compareMoves(aMove, 2);
+        }
+
+        // compute AI and Player scores
+        if (result == 1) {
+            p_score++;
+        } 
+        else if (result == -1) {
+            a_score++;
+        }
+        printf("AI score: %d Player score: %d\n", a_score, p_score);
     }
-    else
-    {
-        if (player_move == ROCK && ai_move == SCISSORS)
-        {
-            player_score_l++;
-            printf("Rock bashes scissors. You win!\n");
-            printf("AI score: %d, player score: %d\n", ai_score_l, player_score_l);
-            *player_score = player_score_l;
-            *ai_score = ai_score_l;
-        }
-        else if (player_move == ROCK && ai_move == PAPER)
-        {
-            ai_score_l++;
-            printf("Paper covers rock. You lose!\n");
-            printf("AI score: %d, player score: %d\n", ai_score_l, player_score_l);
-            *player_score = player_score_l;
-            *ai_score = ai_score_l;
-        }
-        else if (player_move == SCISSORS && ai_move == PAPER)
-        {
-            player_score_l++;
-            printf("Scissors cuts paper. You win!\n");
-            printf("AI score: %d, player score: %d\n", ai_score_l, player_score_l);
-            *player_score = player_score_l;
-            *ai_score = ai_score_l;
-        }
-        else if (player_move == SCISSORS && ai_move == ROCK)
-        {
-            ai_score_l++;
-            printf("Rock bashes scissors. You lose!\n");
-            printf("AI score: %d, player score: %d\n", ai_score_l, player_score_l);
-            *player_score = player_score_l;
-            *ai_score = ai_score_l;
-        }
-        else if (player_move == PAPER && ai_move == ROCK)
-        {
-            player_score_l++;
-            printf("Paper covers rock. You win!\n");
-            printf("AI score: %d, player score: %d\n", ai_score_l, player_score_l);
-            *player_score = player_score_l;
-            *ai_score = ai_score_l;
-        }
-        else if (player_move == PAPER && ai_move == SCISSORS)
-        {
-            ai_score_l++;
-            printf("Scissors cuts paper. You lose!\n");
-            printf("AI score: %d, player score: %d\n", ai_score_l, player_score_l);
-            *player_score = player_score_l;
-            *ai_score = ai_score_l;
-        }
-        else
-        {
-            printf("Draw. You and AI made the same move.\n");
-            printf("AI score: %d, player score: %d\n", ai_score_l, player_score_l);
-            *player_score = player_score_l;
-            *ai_score = ai_score_l;
-        }
+    //compute winner
+    if (p_score > a_score) {
+        printf("Player wins!\n");
+    } 
+    else if (p_score < a_score) {
+        printf("AI wins!\n");
+    } 
+    else {
+        printf("It's a tie!\n");
     }
     return 0;
 }
 
-int main()
-{
-    srand(time(0));
-
-    int player_move_o = 0;
-    int ai_move_o = 0;
-    int player_score = 0;
-    int ai_score = 0;
-    int rounds;
-
-    printf("Welcome to Rock, Paper, Scissors!\nHow many rounds do you want to play?\n");
-    scanf("%d", &rounds);
-
-    for (int i = 0; i < rounds; i++)
-    {
-        printf("Which do you choose? Enter (1) for rock, (2) for paper, or (3) for scissors?\n");
-        scanf("%d", &player_move_o);
-
-        // generate random number for ai move
-        ai_move_o = (rand() % 3) + 1;
-
-        if (ai_move_o == ROCK)
-        {
-            printf("AI choses rock.\n");
-        }
-        else if (ai_move_o == PAPER)
-        {
-            printf("AI choses paper.\n");
-        }
-        else if (ai_move_o == SCISSORS)
-        {
-            printf("AI choses scissors.\n");
-        }
-
-        // game rule
-        match(&player_move_o, &ai_move_o, &player_score, &ai_score);
+// rock = 0; paper = 1; scissors = 2
+// 0 = ties; 1 = player win; -1 = ai win
+int compareMoves(int a_move, int p_move) {
+    if (p_move == a_move) { // same move
+        return 0;
     }
-    return 0;
+    else if (p_move + a_move == 1) { // rock + paper
+        if (p_move == 0) {
+            return -1;
+        } else {
+            return 1;
+        }
+    }
+    else if (p_move + a_move == 2) { // rock + scissors
+        if (p_move == 0) {
+            return 1;
+        } else {
+            return -1;
+        }
+    }
+    else {
+        if (p_move == 1) { // paper + scissors
+            return -1;
+        } else {
+            return 1;
+        }
+    }
 }
