@@ -9,11 +9,10 @@ int main(int argc, char** argv) {
     exit(1);                                                                     
   }  
 
-  int w, h, max_char; // char msg[1024];
-  unsigned char product;
+  int w, h, max_char, product;
   unsigned char mask = 0x01; 
   char* input_name = argv[1];
-  char* output_name = malloc(strlen(argv[1]) + 8);
+  char* output_name = malloc(strlen(argv[1]) + 9);
   int name_len = strlen(input_name) - 4;
 
   struct ppm_pixel** graph_matrix = NULL;
