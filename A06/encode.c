@@ -30,7 +30,7 @@ int main(int argc, char** argv) {
 
   printf("Reading %s with %d and height %d\n", input_name, w, h);                                                                                          
                                                                                                                                  
-  char* secret_msg = malloc(sizeof(char) * max_char);                                                  
+  char* secret_msg = malloc(sizeof(char) * (max_char + 1));                                                  
   if (secret_msg == NULL) {                                                             
     printf("memory allocation failed. Exiting");                                 
     exit(1);                                                                     
@@ -42,7 +42,7 @@ int main(int argc, char** argv) {
   fgets(secret_msg, max_char, stdin);
   int secret_msg_len = strlen(secret_msg);
 
-  char* secret_msg_bi = malloc(sizeof(char) * (w * h * 3 + 1));
+  char* secret_msg_bi = malloc(sizeof(char) * (secret_msg_len * 8 + 1));
   if (secret_msg_bi == NULL) {
     printf("memory allocation failed. Exiting");                                 
     exit(1);
@@ -65,9 +65,18 @@ int main(int argc, char** argv) {
   printf("secretmsg in binary: %s", secret_msg_bi);
 
   int num = 0;
-  for (int j = 0; j < h ; j++) {                                                 
+  for (int j = 0; j < h ; j++) {     
+    if (num >= secret_msg_len) {
+      break;
+    }                                           
     for (int k = 0; k < w; k++) {
+      if (num >= secret_msg_len) {
+        break;
+      } 
       for (int l = 0; l < 3; l++) {
+        if (num >= secret_msg_len) {
+        break;
+      } 
 
         if (secret_msg_bi[num] == '1') { // encode '1'
           if (graph_matrix[j][k].colors[l] % 2 == 0) {
