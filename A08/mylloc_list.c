@@ -54,48 +54,58 @@ void free(void *memory) {
 }
 
 void fragstats(void* buffers[], int len) {
+  int unused_mem = 0;
+  int free_cnk = 0;
   int total_free_cnk = 0;
   int total_inUse_cnk = 0;
-  int total_unused_mem = 0;
   int l_unused_cnk = 0;
-  float ave_unused_cnk;
+  float ave_unused_cnk = 0.00;
   int s_unused_cnk = 99999999;
+  int total_unused_mem = 0;
   int l_free_cnk = 0;
-  float ave_free_cnk;
+  float ave_free_cnk = 0.00;
   int s_free_cnk = 99999999;
 
   for (int i = 0; i < len; i++) { // count used block
     if (buffers[i] != NULL) {
       struct chunk *cnk = (struct chunk*)((struct chunk*)buffers[i] - 1);
       total_inUse_cnk++;
-      if (cnk->mem_in_use < s_unused_cnk) {
-        s_unused_cnk = cnk->mem_in_use;
+      unused_mem = cnk->size - cnk->mem_in_use; // Unused memory
+
+      if (unused_mem < s_unused_cnk) {
+        s_unused_cnk = unused_mem;
       }
-      else if (cnk->mem_in_use > s_unused_cnk) {
-        l_unused_cnk = cnk->mem_in_use;
+      else if (unused_mem > l_unused_cnk) {
+        l_unused_cnk = unused_mem;
       }
-      total_unused_mem += cnk->mem_in_use;
+
+      total_unused_mem += unused_mem;
     } 
   }
-  ave_unused_cnk = total_unused_mem / len;
 
   struct chunk *current = flist;
   while (current != NULL) { // count freed blocks
-    total_free_cnk++;
+    free_cnk++;
+    total_free_cnk += current->size;
+
     if (current->size < s_free_cnk) {
       s_free_cnk = current->size;
     }
     else if (current->size > l_free_cnk) {
       l_free_cnk = current->size;
     }
-    total_inUse_cnk += current->size;
+
     current = current->next;
   }
-  ave_free_cnk = total_inUse_cnk / total_free_cnk;
 
+  ave_unused_cnk = total_unused_mem / total_inUse_cnk; // calculate average
+  ave_free_cnk = (float) (total_free_cnk / free_cnk);
   
   int total_block = total_free_cnk + total_inUse_cnk;
-  printf("Total blocks: %d, Free: %d, Used: %d\n", total_block, total_free_cnk, total_inUse_cnk);
-  printf("Internal unused: total: %d, average: %.2f, smallest: %d, largest: %d\n", total_unused_mem, ave_unused_cnk, s_unused_cnk, l_unused_cnk);
-  printf("External unused: total: %d, average: %.2f, smallest: %d, largest: %d\n", total_free_cnk, ave_free_cnk, s_free_cnk, l_free_cnk);
+  printf("Total blocks: %d, Free: %d, Used: %d\n", 
+    total_block, total_free_cnk, total_inUse_cnk);
+  printf("Internal unused: total: %d, average: %.2f, smallest: %d, largest: %d\n", 
+    total_unused_mem, ave_unused_cnk, s_unused_cnk, l_unused_cnk);
+  printf("External unused: total: %d, average: %.2f, smallest: %d, largest: %d\n", 
+    total_free_cnk, ave_free_cnk, s_free_cnk, l_free_cnk);
 }
