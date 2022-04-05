@@ -30,3 +30,65 @@ this amount makes sense.
 = Fragementation
 
 1. Fragmentation is when there are chunks of free heap memory manager that typically keeps lists of different ranges of sizes of heap space to enable fast searching for a free extent of particular size. Internal fragmentation is the total amount of unused memory on used chunks. Vice versa, external fragmentation is the total amount of memory on freed chunks on the free list.
+
+2. The initial top of the heap is 0x7f5b7d30c000.
+Total blocks: 144403, Free: 144345, Used: 58
+Internal unused: total: 178682, average: 3080.00, smallest: 511, largest: 3979
+External unused: total: 144345, average: 1401.00, smallest: 10, largest: 3977
+0
+The current top of the heap is 0x7f5b7d362527.
+Increased by 345 (0x159) Kbyte
+Total blocks: 177603, Free: 177549, Used: 54
+Internal unused: total: 159454, average: 2952.00, smallest: 107, largest: 3991
+External unused: total: 177549, average: 1571.00, smallest: 10, largest: 3984
+1
+The current top of the heap is 0x7f5b7d368327.
+Increased by 368 (0x170) Kbyte
+Total blocks: 189393, Free: 189341, Used: 52
+Internal unused: total: 157088, average: 3020.00, smallest: 129, largest: 3977
+External unused: total: 189341, average: 1618.00, smallest: 10, largest: 3997
+2
+The current top of the heap is 0x7f5b7d36a282.
+Increased by 376 (0x178) Kbyte
+Total blocks: 201287, Free: 201235, Used: 52
+Internal unused: total: 160672, average: 3089.00, smallest: 146, largest: 3989
+External unused: total: 201235, average: 1676.00, smallest: 10, largest: 3998
+3
+The current top of the heap is 0x7f5b7d36d188.
+Increased by 388 (0x184) Kbyte
+Total blocks: 222255, Free: 222205, Used: 50
+Internal unused: total: 145974, average: 2919.00, smallest: 6, largest: 3984
+External unused: total: 222205, average: 1777.00, smallest: 10, largest: 3999
+4
+The current top of the heap is 0x7f5b7d370095.
+Increased by 400 (0x190) Kbyte
+Total blocks: 189200, Free: 189140, Used: 60
+Internal unused: total: 191611, average: 3193.00, smallest: 984, largest: 3986
+External unused: total: 189140, average: 1630.00, smallest: 10, largest: 3999
+5
+The current top of the heap is 0x7f5b7d371045.
+Increased by 404 (0x194) Kbyte
+Total blocks: 227279, Free: 227231, Used: 48
+Internal unused: total: 153391, average: 3195.00, smallest: 381, largest: 3991
+External unused: total: 227231, average: 1775.00, smallest: 10, largest: 4000
+6
+The current top of the heap is 0x7f5b7d371045.
+Increased by 404 (0x194) Kbyte
+Total blocks: 219995, Free: 219943, Used: 52
+Internal unused: total: 154837, average: 2977.00, smallest: 138, largest: 3989
+External unused: total: 219943, average: 1759.00, smallest: 10, largest: 3999
+7
+The current top of the heap is 0x7f5b7d371ff5.
+Increased by 407 (0x197) Kbyte
+Total blocks: 193757, Free: 193697, Used: 60
+Internal unused: total: 193404, average: 3223.00, smallest: 401, largest: 3990
+External unused: total: 193697, average: 1641.00, smallest: 10, largest: 4000
+8
+The current top of the heap is 0x7f5b7d372fa5.
+Increased by 411 (0x19b) Kbyte
+Total blocks: 237709, Free: 237661, Used: 48
+Internal unused: total: 150237, average: 3129.00, smallest: 636, largest: 3987
+External unused: total: 237661, average: 1828.00, smallest: 10, largest: 4000
+9
+The current top of the heap is 0x7f5b7d372fa5.
+Increased by 411 (0x19b) Kbyte
