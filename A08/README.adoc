@@ -2,20 +2,31 @@
 
 Where did your run your tests? A laptop, or goldengate?
 
+On Goldengate.
 
 What are the performance specifications of the machine: number and speed of
 processors, size of RAM? (use `lscpu` and `free -m`)
+
+Number of processors: 64
+CPU speed: 1200.009 MHz
+RAM: 95320 MiB
 
 
 = Allocations
 
 In `simple.c`, where does the increase in 1040 bytes come from?
+
+The 1040 bytes come from 'printf' allocating memory for stdout.
+
 Why is the value 1040 bytes?
 
+'printf' called 'malloc(1024)' to store its stirng, and 'malloc' adds 16 bytes of metadata that makes a total of 1040 bytes.
 
 How many bytes does `mylloc_list.c` allocate when the program ends? Explain why
 this amount makes sense.
 
+116 bytes are allocated at the end of the program because our first call to malloc creates 116 bytes(100 and 16 bytes of 'chunk struct'). Thus we are allocating 116 bytes of memory for each malloc(100) call.
 
 = Fragementation
 
+1. Fragmentation is when there are chunks of free heap memory manager that typically keeps lists of different ranges of sizes of heap space to enable fast searching for a free extent of particular size. Internal fragmentation is the total amount of unused memory on used chunks. Vice versa, external fragmentation is the total amount of memory on freed chunks on the free list.
