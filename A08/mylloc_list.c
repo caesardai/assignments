@@ -70,12 +70,12 @@ void fragstats(void* buffers[], int len) {
     if (buffers[i] != NULL) {
       struct chunk *cnk = (struct chunk*)((struct chunk*)buffers[i] - 1);
       total_inUse_cnk++;
-      unused_mem = cnk->size - cnk->mem_in_use; // Unused memory
+      unused_mem = cnk->size - cnk->mem_in_use;
 
       if (unused_mem < s_unused_cnk) {
         s_unused_cnk = unused_mem;
       }
-      else if (unused_mem > l_unused_cnk) {
+      if (unused_mem > l_unused_cnk) {
         l_unused_cnk = unused_mem;
       }
 
@@ -91,7 +91,9 @@ void fragstats(void* buffers[], int len) {
     if (current->size < s_free_cnk) {
       s_free_cnk = current->size;
     }
-    else if (current->size > l_free_cnk) {
+    
+    
+    if (current->size > l_free_cnk) {
       l_free_cnk = current->size;
     }
 
