@@ -7,7 +7,7 @@
 #include "read_ppm.h"
 
 int main(int argc, char* argv[]) {
-  int size = 400;
+  int size = 2000;
   float xmin = -2.0;
   float xmax = 0.47;
   float ymin = -1.12;
@@ -84,14 +84,14 @@ int main(int argc, char* argv[]) {
         iter++;
       }
       if (iter < maxIterations) { //escaped
-        graph_matrix[row][col].red = palette[iter].red;
-        graph_matrix[row][col].green = palette[iter].green;
-        graph_matrix[row][col].blue = palette[iter].blue;
+        graph_matrix[col][row].red = palette[iter].red;
+        graph_matrix[col][row].green = palette[iter].green;
+        graph_matrix[col][row].blue = palette[iter].blue;
       } 
       else { // else all black
-        graph_matrix[row][col].red = 0;
-        graph_matrix[row][col].green = 0;
-        graph_matrix[row][col].blue = 0; 
+        graph_matrix[col][row].red = 0;
+        graph_matrix[col][row].green = 0;
+        graph_matrix[col][row].blue = 0; 
       }
     }
   }
