@@ -2,14 +2,14 @@
 
 Where did your run your tests? A laptop, or goldengate?
 
-A laptop.
+    A laptop.
 
 What are the performance specifications of the machine: number and speed of
 processors, size of RAM? (use `lscpu` and `free -m`)
 
-number of processors: 8 cores(4 performance, 4 efficiency)
-processor speed: 2 GHz
-RAM: 16GB
+    number of processors: 8 cores(4 performance, 4 efficiency)
+    processor speed: 2 GHz
+    RAM: 16GB
 
 
 = Single-process mandelbrot
@@ -35,10 +35,9 @@ the amount of time it takes to compute each image.
 [cols="1,1"]
 !===
 | Size | Time (s) 
-| 100 | todo
-| 400 | todo
-| 800 | todo
-| 1000 | todo
-| 2000 | todo
+| 100 | 0.022407
+| 400 | 0.183702
+| 800 | 0.617821
+| 1000 | 1.000803
+| 2000 | 3.818264
 !===
-
