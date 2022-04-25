@@ -16,10 +16,10 @@ void compute_image(struct ppm_pixel* palette, struct ppm_pixel** graph_matrix, i
   int iter;
   float xfrac, yfrac, x0, y0, x, y, xtmp;
 
-  for (int row = row_s; row < row_t; row++) {
-    for (int col = col_s; col < col_t; col++) {
-      xfrac = (float)row /size;
-      yfrac = (float)col /size;
+  for (int r = row_s; r < row_t; r++) {
+    for (int c = col_s; c < col_t; c++) {
+      xfrac = (float) r /size;
+      yfrac = (float) c /size;
       x0 = xmin + xfrac * (xmax - xmin);
       y0 = ymin + yfrac * (ymax - ymin);
 
@@ -33,14 +33,14 @@ void compute_image(struct ppm_pixel* palette, struct ppm_pixel** graph_matrix, i
         iter++;
       }
       if (iter < maxIterations) { //escaped
-        graph_matrix[col][row].red = palette[iter].red;
-        graph_matrix[col][row].green = palette[iter].green;
-        graph_matrix[col][row].blue = palette[iter].blue;
+        graph_matrix[c][r].red = palette[iter].red;
+        graph_matrix[c][r].green = palette[iter].green;
+        graph_matrix[c][r].blue = palette[iter].blue;
       } 
       else { // else all black
-        graph_matrix[col][row].red = 0;
-        graph_matrix[col][row].green = 0;
-        graph_matrix[col][row].blue = 0; 
+        graph_matrix[c][r].red = 0;
+        graph_matrix[c][r].green = 0;
+        graph_matrix[c][r].blue = 0; 
       }
     }
   }
@@ -56,10 +56,6 @@ int main(int argc, char* argv[]) {
   int maxIterations = 1000;
   int numProcesses = 4;
   struct timeval tstart, tend;
-  int shmid_outer;
-  int *shmid_inner;
-  struct ppm_pixel** graph_matrix = NULL;
-  struct ppm_pixel* palette = NULL;
   
   int opt;
   while ((opt = getopt(argc, argv, ":s:l:r:t:b:p:")) != -1) {
@@ -79,43 +75,42 @@ int main(int argc, char* argv[]) {
   printf("  Y range = [%.4f,%.4f]\n", ymin, ymax);
 
   // todo: your code here
-  // shared image memory
-    // OUTER Layer
-  shmid_outer = shmget(IPC_PRIVATE, sizeof(struct ppm_pixel*) * size, 0644 | IPC_CREAT);
-  if (shmid_outer == -1) {
-    perror("Can't initialize outer shared1 memory. Exiting.\n");
+  // initialize shared memory space
+  // buys a piece fo land
+  int shmid;
+  shmid = shmget(IPC_PRIVATE, sizeof(struct ppm_pixel) * size * size, 0644 | IPC_CREAT);
+  if (shmid == -1) {
+    perror("Error: cannot initialize shared memory\n");
     exit(1);
-  }
-  graph_matrix = shmat(shmid_outer, NULL, 0);
-  if (graph_matrix == (void*) - 1) {
-    perror("Can't access outer shared2 memory. Exiting.\n");
-    exit(1);
-  }
-    // INNER Layer
-  shmid_inner = malloc(sizeof(int) * size);
-  if (shmid_inner == NULL) {
-    printf("Memory allocation failed. Exiting.\n");
-    exit(1);
-  }
-  for (int i = 0; i < size; i++) {
-    shmid_inner[i] = shmget(IPC_PRIVATE, sizeof(struct ppm_pixel) * size, 0644 | IPC_CREAT);
-    if (shmid_inner[i] == -1) {
-      perror("Can't initialize shared inner1 memory. Exiting.\n");
-      exit(1);
-    }
-    graph_matrix[i] = shmat(shmid_inner[i], NULL, 0);
-    if (graph_matrix[i] == (void*) - 1) {
-      perror("Can't access shared inner2 memory. Exiting.\n");
-      exit(1);
-    }
   }
 
-  // generate palette
-  palette = malloc(sizeof(struct ppm_pixel) * maxIterations);
-  if (palette == NULL) {
-    printf("Memory allocation failed. Exiting.\n");
+  // access shared memory space
+  // builds empty houses on the land
+  struct ppm_pixel* buffer = shmat(shmid, NULL, 0);
+  if (buffer == (void*) - 1) {
+    perror("Error: cannot access shared memory\n");
     exit(1);
   }
+
+  // moving into the houses
+  struct ppm_pixel** graph_matrix = malloc(sizeof(struct ppm_pixel*) * size);
+  for (int i = 0; i < size; i++) {
+    graph_matrix[i] = &(buffer[i*size]);
+  }
+
+  // generating palette
+  int shmid1;
+  shmid1 = shmget(IPC_PRIVATE, sizeof(struct ppm_pixel) * maxIterations, 0644 | IPC_CREAT);
+  if (shmid1 == -1) {
+    perror("Error: cannot initialize shared memory\n");
+    exit(1);
+  }
+  struct ppm_pixel* palette = shmat(shmid1, NULL, 0);
+  if (palette == (void *) -1) {
+    perror("Error: cannot access palette shared memory\n");
+    exit(1);
+  } 
+
   srand(time(0));
   for (int i = 0; i < maxIterations; i++) {
     palette[i].red = rand() % 255;
@@ -126,26 +121,26 @@ int main(int argc, char* argv[]) {
   // compute image with 4 child processes
   gettimeofday(&tstart, NULL);
   for (int i = 0; i < numProcesses; i++) {
-    int pid = fork(); // creating new child process
-    int row_s, row_t, col_s, col_t;
     int half = size / 2;
+    int row_s, row_t, col_s, col_t;
+    int pid = fork(); // creating new child process
 
-    if (i == 0) {
+    if (i == 0) { // first quadrant
       row_s = 0;
       row_t = half;
       col_s = 0;
       col_t = half;
-    } else if (i == 1) {
+    } else if (i == 1) { // second quadrant
       row_s = 0;
       row_t = half;
       col_s = half;
       col_t = size;
-    } else if (i == 2) {
+    } else if (i == 2) { // third quadrant
       row_s = half;
       row_t = size;
       col_s = 0;
       col_t = half;
-    } else if (i == 3) {
+    } else if (i == 3) { // forth quadrant
       row_s = half;
       row_t = size;
       col_s = half;
@@ -154,6 +149,7 @@ int main(int argc, char* argv[]) {
     if (pid == 0) {
       compute_image(palette, graph_matrix, half, xmin, xmax, ymin, ymax, maxIterations, 
          row_s, row_t, col_s, col_t);
+      free(graph_matrix);
       exit(0);
     }
     else {
@@ -182,30 +178,26 @@ int main(int argc, char* argv[]) {
   write_ppm(output_name, graph_matrix, size, size);
 
   // detach shared memory
-    // inner
-  for (int i = 0; i < size; i++) {
-    if (shmdt(graph_matrix[i]) == -1) {
-      perror("Failed to detach from inner shared2 memory. Exiting.\n");
-      exit(1);
-    }
-    if (shmctl(shmid_inner[i], IPC_RMID, 0) == -1){
-      perror("Failed to delete inner shared1 memory. Exiting.\n");
-      exit(1);
-    }
-  }
-    // outer
-  if (shmdt(graph_matrix) == -1) {
-    perror("Failed to detach from outer shared2 memory. Exiting.\n");
+  free(graph_matrix);
+  if (shmdt(buffer) == -1) {
+    perror("Error: cannot detatch from shared graph memory\n");
     exit(1);
   }
-  if (shmctl(shmid_outer, IPC_RMID, 0) == -1) {
-    perror("Failed to detach outer shared1 memory. Exiting.\n");
-    exit(1);
-  }
-  free(shmid_inner);
-  shmid_inner = NULL;
-  free(palette);
-  palette = NULL;
 
+  if (shmctl(shmid, IPC_RMID, 0) == -1) {
+    perror("Error: cannot remove shared memory\n");
+    exit(1);
+  }
+
+  if(shmdt(palette) == -1) {
+    perror("Error: cannot detatch from shared palette memory\n");
+    exit(1);
+  }
+
+  if (shmctl(shmid1, IPC_RMID, 0) == -1) {
+    perror("Error: cannot remove shared memory\n");
+    exit(1);
+  }
+  
   return 0;
 }
