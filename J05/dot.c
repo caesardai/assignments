@@ -42,7 +42,8 @@ int main(int argc, char *argv[]) {
 
   // TODO: Implement your thread solution here
   printf("Test with 4 threads\n");
-  pthread_mutex_t mutex = PTHREAD_COND_INITIALIZER;
+  pthread_mutex_t mutex;
+  pthread_mutex_init(&mutex, NULL);
   pthread_t tid[4];
 
   struct thread_data ids[4]; // 4 threads
