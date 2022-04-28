@@ -147,7 +147,7 @@ int main(int argc, char* argv[]) {
       col_t = size;
     }
     if (pid == 0) {
-      compute_image(palette, graph_matrix, half, xmin, xmax, ymin, ymax, maxIterations, 
+      compute_image(palette, graph_matrix, size, xmin, xmax, ymin, ymax, maxIterations, 
          row_s, row_t, col_s, col_t);
       free(graph_matrix);
       exit(0);
