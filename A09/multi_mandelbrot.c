@@ -47,7 +47,7 @@ void compute_image(struct ppm_pixel* palette, struct ppm_pixel** graph_matrix, i
 }
 
 int main(int argc, char* argv[]) {
-  int size = 400;
+  int size = 1000;
   float xmin = -2.0;
   float xmax = 0.47;
   float ymin = -1.12;
