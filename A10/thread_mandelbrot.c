@@ -24,7 +24,7 @@ struct thread_data {
 void* compute_image(void* args);
 
 int main(int argc, char* argv[]) {
-  int size = 2000;
+  int size = 800;
   float xmin = -2.0;
   float xmax = 0.47;
   float ymin = -1.12;
@@ -33,6 +33,8 @@ int main(int argc, char* argv[]) {
   int numProcesses = 4;
   double timer;
   struct timeval tstart, tend;
+  pthread_t tid[4];
+  struct thread_data data[4];
 
   int opt;
   while ((opt = getopt(argc, argv, ":s:l:r:t:b:p:")) != -1) {
@@ -81,9 +83,6 @@ int main(int argc, char* argv[]) {
   }
 
   // compute image
-  pthread_t tid[4];
-  struct thread_data data[4];
-
   gettimeofday(&tstart, NULL);
   for (int i = 0; i < numProcesses; i++) {
     int half = size / 2;
@@ -110,6 +109,7 @@ int main(int argc, char* argv[]) {
       col_s = half;
       col_t = size;
     }
+    data[i].id = i;
     data[i].size = size;
     data[i].row_s = row_s;
     data[i].row_t = row_t;
@@ -141,17 +141,17 @@ int main(int argc, char* argv[]) {
   // write file
   write_ppm(output_name, graph_matrix, size, size);
   
-
   // free memory
-  free(palette);
-  palette = NULL;
-
+  
   for (int i = 0; i < size; i++) {
     free(graph_matrix[i]);
     graph_matrix[i] = NULL;
   }
   free(graph_matrix);
   graph_matrix = NULL;
+
+  free(palette);
+  palette = NULL;
 
   return 0;
 }
