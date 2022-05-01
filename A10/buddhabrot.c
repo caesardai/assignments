@@ -18,6 +18,8 @@ void *determine_membership(void* args);
 void *compute_visited_counts(void* args);
 // step 3
 void *compute_colors(void* args); 
+// start routine
+void * thread_function(void * args);
 
 struct thread_data {
   int id;
@@ -59,7 +61,7 @@ int main(int argc, char* argv[]) {
         "-b <ymin> -t <ymax> -p <numProcesses>\n", argv[0]); break;
     }
   }
-  printf("Generating mandelbrot with size %dx%d\n", size, size);
+  printf("Generating buddhabrot with size %dx%d\n", size, size);
   printf("  Num processes = %d\n", numProcesses);
   printf("  X range = [%.4f,%.4f]\n", xmin, xmax);
   printf("  Y range = [%.4f,%.4f]\n", ymin, ymax);
@@ -163,11 +165,8 @@ int main(int argc, char* argv[]) {
     data[i].membership_log = membership_log;
     data[i].v_count = v_count;
 
-    pthread_create(&tid[i], NULL, determine_membership, (void*) &data[i]);
-    pthread_create(&tid[i], NULL, compute_visited_counts, (void*) &data[i]);
-    pthread_barrier_wait(&barrier);
-    pthread_create(&tid[i], NULL, compute_colors, (void*) &data[i]);
-    printf("Thread %d) finished\n", data->id);
+    pthread_create(&tid[i], NULL, thread_function, (void*) &data[i]);
+    
   }
 
   for (int i = 0; i < numProcesses; i++) {
@@ -178,7 +177,7 @@ int main(int argc, char* argv[]) {
   printf("Computed buddhabrot set (%dx%d) in %g seconds\n", size, size, timer);
 
   char output_name[128];
-  sprintf(output_name, "mandelbrot-%d-%.10ld.ppm", size, time(0));
+  sprintf(output_name, "buddhbrot-%d-%.10ld.ppm", size, time(0));
   int name_len = strlen(output_name);
   output_name[name_len] = '\0';
 
@@ -203,10 +202,9 @@ int main(int argc, char* argv[]) {
 
   // delete mutex and barrier
   pthread_mutex_destroy(&mutex);
-  pthread_attr_destroy(&barrier);
+  pthread_barrier_destroy(&barrier);
   return 0;
 }
-
 
 
      /////////////////
@@ -243,6 +241,7 @@ void *determine_membership(void* args) {
       }
     }
   }
+  return (void *) NULL;
 }
 
 // step 2
@@ -288,6 +287,7 @@ void *compute_visited_counts(void* args) {
       }
     }
   }
+  return (void *) NULL;
 }
 
 // step 3
@@ -308,4 +308,19 @@ void *compute_colors(void* args) {
       data->graph_matrix[r][c].blue = value * 255;
     }
   }
+  return (void *) NULL;
+}
+
+void * thread_function(void * args) {
+  struct thread_data* data = (struct thread_data *) args;
+  printf("Thread %d) sub-image block: cols (%d, %d) to rows (%d, %d)\n",
+      data->id, data->col_s, data->col_t, data->row_s, data->row_t);
+  // step 1
+  void *determine_membership(void* args);
+  // step 2
+  void *compute_visited_counts(void* args);
+  // step 3
+  void *compute_colors(void* args); 
+  printf("Thread %d) finished\n", data->id);
+  return (void *) NULL;
 }
