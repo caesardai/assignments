@@ -1,3 +1,6 @@
+// name: Caesar Dai
+// added terminating character
+
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
