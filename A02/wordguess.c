@@ -2,102 +2,71 @@
 #include <stdlib.h>
 #include <time.h>
 #include <string.h>
-#include <stdbool.h>
 
-int main()
-{
+int main() {
+  char input;
+  char word[33]; 
+  char game_progress[33]; // 32 + 1 for terminating character
+  int num_words, word_len, rand_choice, game_len;
 
-  int turn = 0;
-  int num_of_words;
-  char buffer[1024];
-  char word[32];
-  char guess;
-  bool match;
-  bool guess_complete;
-
-  // declare 'FILE *' variable
-  FILE *infile;
-  //FILE *outfile;
-
-  srand(time(0));
-
-  // opening the file
-  infile = fopen("words.txt", "r");
+  FILE* infile = fopen("words1.txt", "r");
   if (infile == NULL) {
-    printf("Error: unable to open file %s\n", "words.txt");
+    printf("Unable to open file. Exiting\n");
     exit(1);
   }
 
-  if (fgets(buffer, 1024, infile)) {
-    // pointer to where the char array is stored n max number to be read
-    // infile where the characters are read from
-    sscanf(buffer, "%d", &num_of_words);
+  // read in first line as an integer
+  fgets(word, 33, infile); 
+  num_words = atoi(word); // string to number
+
+  // randomly pick word
+  srand(time(0));
+  rand_choice = rand() % num_words + 1;
+  for (int i = 0; i < rand_choice; i++) {
+    fgets(word, 33, infile);
   }
-
-  int rand_num = rand() % num_of_words + 1;
-
-  for (int i = 0; i < rand_num; i++) {
-    if (fgets(buffer, 1024, infile)) {
-      sscanf(buffer, "%s", word);
-    }
+  
+  word_len = strlen(word);
+  word[word_len - 1] = '\0';
+  
+  for (int i = 0; i < (word_len - 1); i++) {
+    game_progress[i] = '_';
   }
+  game_progress[word_len-1] = '\0';
+  game_len = strlen(game_progress);
 
-  // declare a character pointer that points to the heap and allocate memory space
-  // for characters(1 byte) of twice the length of the chosen random word
-  char* chosen_rand_word = malloc(sizeof(char) * strlen(word) * 2);
-  if (chosen_rand_word == NULL) {
-    printf("Cannot allocate memory. Exiting\n");
-    exit(1);
-  }
-
-  for (int i = 0; i < strlen(word)*2; i++) {
-    if (i % 2 == 0) {
-          strcpy(&chosen_rand_word[i], "_");
-        }
-        else {
-          strcpy(&chosen_rand_word[i], " ");
-        }
-  }
-
-  // funtion starts
+  // print statement
   printf("Welcome to Word Guess!\n");
-
-  while (!guess_complete) // while guess isn't complete, continue
-  {
-    turn++;
-
-    // print statement
-    printf("Turn: %d\n", turn);
-    printf("%s\n", chosen_rand_word);
+  int match = 0;
+  int round_index = 0;
+  int correct_guesses = 0;
+  while(correct_guesses != (word_len - 1)) {
+    match = 0; // reset
+    round_index++;
+    printf("\nTurn: %d\n", round_index);
+    for (int i = 0; i < game_len; i++) {
+      printf("%c ", game_progress[i]);
+    }
+    printf("\n");
     printf("Guess a character: ");
-    scanf(" %c", &guess);
+    scanf(" %c", &input);
 
-    // check whether the guess matches
-    for (int i = 0; i < strlen(word); i++){
-      if (word[i] == guess) {
-        match = true;
-        chosen_rand_word[i*2] = guess;
+    for (int i = 0; i < word_len; i++) {
+      if (word[i] == input) {
+          game_progress[i] = input;
+          correct_guesses++;
+          match = 1;
       }
     }
-
-      if (!match) {
-        printf("Sorry, %c not found\n", guess);
-      }
-
-      guess_complete = true;
-
-      for (int i = 0; i < strlen(word); i++) {
-        if (chosen_rand_word[i*2] == '_') { // if there are still '_', then check is not complete
-          guess_complete = false; 
-        }
-      }
+    if (match != 1) {
+      printf("Sorry, letter %c not found!\n", input);
     }
-
-    printf("%s\n", chosen_rand_word);
-    printf("You have won in %d turns. \n", turn);
-
-    free(chosen_rand_word);
-    chosen_rand_word = NULL;
-
-    return 0;
+  }
+  for (int i = 0; i < game_len; i++) {
+    printf("%c ", game_progress[i]);
+  }
+  printf("\nYou won in %d turns!\n", round_index);
+  fclose(infile);
+  return 0;
 }
+
