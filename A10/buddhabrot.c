@@ -177,7 +177,7 @@ int main(int argc, char* argv[]) {
   printf("Computed buddhabrot set (%dx%d) in %g seconds\n", size, size, timer);
 
   char output_name[128];
-  sprintf(output_name, "buddhbrot-%d-%.10ld.ppm", size, time(0));
+  sprintf(output_name, "buddhabrot-%d-%.10ld.ppm", size, time(0));
   int name_len = strlen(output_name);
   output_name[name_len] = '\0';
 
