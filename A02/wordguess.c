@@ -3,6 +3,9 @@
 #include <time.h>
 #include <string.h>
 
+int matching(int word_len, char input, int *correct_guesses, 
+  char game_progress[], char word[]);
+
 int main() {
   char input;
   char word[33]; 
@@ -51,21 +54,34 @@ int main() {
     printf("Guess a character: ");
     scanf(" %c", &input);
 
-    for (int i = 0; i < word_len; i++) {
-      if (word[i] == input) {
-          game_progress[i] = input;
-          correct_guesses++;
-          match = 1;
-      }
-    }
-    if (match != 1) {
-      printf("Sorry, letter %c not found!\n", input);
-    }
+    matching(word_len, input, &correct_guesses, game_progress, word);
   }
+
   for (int i = 0; i < game_len; i++) {
     printf("%c ", game_progress[i]);
   }
+
   printf("\nYou won in %d turns!\n", round_index);
   fclose(infile);
   return 0;
 }
+
+int matching(int word_len, char input, int *correct_guesses, 
+  char game_progress[], char word[]) {
+  int found = 0;
+  int num_inputs;
+  num_inputs = *correct_guesses;
+  for (int i = 0; i < word_len; i++) {
+    if (word[i] == input) {
+      game_progress[i] = input;
+      num_inputs++;
+      found = 1;
+    }
+  }
+  if (found != 1) {
+      printf("Sorry, letter %c not found!\n", input);
+    }
+  *correct_guesses = num_inputs;
+  return num_inputs;
+}
+
